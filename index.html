@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>Task List</title>
+    <link rel = "icon" href = "https://images.unsplash.com/photo-1470790376778-a9fbc86d70e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1904&q=80" type = "image/x-icon">
+</head>
+
+<body>
+    <div class="container">
+        <header class="input_list">
+            <input class="input" type="text" placeholder="enter your assigment here" autofocus>
+        </header>
+        <nav class="status_list">
+            <button class="todo">TODO</button>
+            <button class="done">DONE</button>
+        </nav>
+        <main class="page_list">
+        </main>
+        <section class="clear_page_list">
+            <button class="remove_all">remove all <span id="id_span"></span></button>
+        </section>
+        <footer class="switch_color">
+            <button class="switch_btn">switch display to <span id="id_second_span"></span> mode</button>
+        </footer>
+    </div>
+    <script src="index.js" defer></script>
+</body>
+
+</html>
