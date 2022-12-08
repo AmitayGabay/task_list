@@ -14,6 +14,19 @@ const spanSwitch_btn = document.querySelector("#id_second_span");
 spanSwitch_btn.innerText = "DARK";
 let defaultModeIsDark = false;
 let itemsArr = [];
+let inputVal = "";
+input.addEventListener("change", (e) => {
+    inputVal = e.target.value;
+    console.log(inputVal);
+})
+document.querySelector("input").addEventListener("change", (e) => console.log(e))
+const getDataFromApi = async () => {
+    itemsArr = await (await fetch("http://localhost:7000/tasks")).json();
+    itemsArr.reverse();
+    renderTodo();
+}
+
+getDataFromApi();
 
 input.addEventListener("keyup", () => {
     if (input.value == "") {
@@ -24,31 +37,49 @@ input.addEventListener("keyup", () => {
     }
 })
 
-input.addEventListener("keypress", (e) => {
+input.addEventListener("keypress", async (e) => {
     if (e.key == "Enter" && input.value != "") {
-        const taskObg = { content: input.value, isDone: false, id: Date.now() };
-        itemsArr.unshift(taskObg);
+        try {
+            const data = await (await fetch("http://localhost:7000/tasks", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: input.value })
+            })).json();
+            itemsArr.unshift(data);
+            add.style.display = "none";
+            input.value = "";
+            renderTodo();
+        }
+        catch (e) { console.error(e) };
+    }
+})
+
+add.addEventListener("click", async () => {
+    try {
+        const data = await (await fetch("http://localhost:7000/tasks", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: input.value })
+        })).json();
+        itemsArr.unshift(data);
         add.style.display = "none";
         input.value = "";
         renderTodo();
     }
-})
-
-add.addEventListener("click", () => {
-    const taskObg = { content: input.value, isDone: false, id: Date.now() };
-    itemsArr.unshift(taskObg);
-    add.style.display = "none";
-    input.value = "";
-    renderTodo();
+    catch (e) { console.error(e) };
 })
 
 const renderTodo = () => {
     page_list.innerHTML = "";
     itemsArr.forEach(item => {
         if (item.isDone === false) {
-            const idOfItem = item.id;
+            const idOfItem = item._id;
             const removeId = idOfItem;
-            const doneId = idOfItem + 1;
+            const doneId = idOfItem + 'd';
 
             const div_wrapper = document.createElement("div");
             div_wrapper.className = "div_wrapper";
@@ -84,35 +115,62 @@ const renderTodo = () => {
 }
 
 const removeItem = (_remove_btn) => {
-    _remove_btn.addEventListener("click", () => {
-        const indexOfItemDeleted = itemsArr.findIndex((item) => {
-            return item.id == _remove_btn.id;
-        })
-        let toggle = itemsArr[indexOfItemDeleted].isDone;
-        itemsArr.splice(indexOfItemDeleted, 1);
+    _remove_btn.addEventListener("click", async () => {
+        try {
+            const indexOfItemDeleted = itemsArr.findIndex((item) => {
+                return String(item._id) == _remove_btn.id;
+            })
+            let toggle = itemsArr[indexOfItemDeleted].isDone;
 
-        if (toggle === false) {
-            renderTodo();
-        }
-        else {
-            renderDone();
+            await fetch(`http://localhost:7000/tasks?id=${itemsArr[indexOfItemDeleted]._id}`, {
+                method: "DELETE"
+            });
+            itemsArr.splice(indexOfItemDeleted, 1);
+
+            if (toggle === false) {
+                renderTodo();
+            }
+            else {
+                renderDone();
+            }
+        } catch (e) {
+            console.error(e);
         }
     })
 }
 
 const doneItem = (_done_btn) => {
-    _done_btn.addEventListener("click", () => {
-        const indexOfItemDone = itemsArr.findIndex((item) => {
-            return item.id == _done_btn.id - 1;
-        })
-        let toggle = itemsArr[indexOfItemDone].isDone;
-        if (toggle === false) {
-            itemsArr[indexOfItemDone].isDone = true;
-            renderTodo();
-        }
-        else {
-            itemsArr[indexOfItemDone].isDone = false;
-            renderDone();
+    _done_btn.addEventListener("click", async () => {
+        try {
+            const indexOfItemDone = itemsArr.findIndex((item) => {
+                return String(item._id) + 'd' == _done_btn.id;
+            })
+            let toggle = itemsArr[indexOfItemDone].isDone;
+
+            if (toggle === false) {
+                await fetch("http://localhost:7000/tasks/done", {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id })
+                });
+                itemsArr[indexOfItemDone].isDone = true;
+                renderTodo();
+            }
+            else {
+                await fetch("http://localhost:7000/tasks/undone", {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id })
+                });
+                itemsArr[indexOfItemDone].isDone = false;
+                renderDone();
+            }
+        } catch (e) {
+            console.error(e);
         }
     })
 }
@@ -125,9 +183,9 @@ const renderDone = () => {
     page_list.innerHTML = "";
     itemsArr.forEach(item => {
         if (item.isDone === true) {
-            const idOfItem = item.id;
+            const idOfItem = item._id;
             const removeId = idOfItem;
-            const unDoneId = idOfItem + 1;
+            const unDoneId = idOfItem + 'd';
 
             const div_wrapper = document.createElement("div");
             div_wrapper.className = "div_wrapper";
@@ -166,14 +224,24 @@ todo.addEventListener("click", () => {
     renderTodo();
 })
 
-remove_all.addEventListener("click", () => {
-    if (spanRemove_all.innerText === "TODO") {
-       itemsArr = itemsArr.filter(item => item.isDone !== false);
-        renderTodo();
-    }
-    if (spanRemove_all.innerText === "DONE") {
-        itemsArr = itemsArr.filter(item => item.isDone !== true);
-        renderDone();
+remove_all.addEventListener("click", async () => {
+    try {
+        if (spanRemove_all.innerText === "TODO") {
+            await fetch("http://localhost:7000/tasks/todo-list", {
+                method: "DELETE"
+            });
+            itemsArr = itemsArr.filter(item => item.isDone !== false);
+            renderTodo();
+        }
+        if (spanRemove_all.innerText === "DONE") {
+            await fetch("http://localhost:7000/tasks/done-list", {
+                method: "DELETE"
+            });
+            itemsArr = itemsArr.filter(item => item.isDone !== true);
+            renderDone();
+        }
+    } catch (e) {
+        console.error(e);
     }
 })
 
@@ -199,7 +267,7 @@ switch_btn.addEventListener("click", () => {
 
         defaultModeIsDark = true;
     }
-    else{
+    else {
         document.body.style.background = "white";
         input.parentElement.style.border = "solid black 4px";
         input.parentElement.style.background = "white";
