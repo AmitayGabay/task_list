@@ -1,3 +1,6 @@
+const BASE_URL = "https://tasks-list.onrender.com/tasks";
+const _BASE_URL = "http://localhost:7000/tasks";
+
 const input = document.querySelector(".input");
 const add = document.createElement("button");
 add.className = "add_btn";
@@ -21,7 +24,7 @@ input.addEventListener("change", (e) => {
 })
 document.querySelector("input").addEventListener("change", (e) => console.log(e))
 const getDataFromApi = async () => {
-    itemsArr = await (await fetch("http://localhost:7000/tasks")).json();
+    itemsArr = await (await fetch(`${BASE_URL}`)).json();
     itemsArr.reverse();
     renderTodo();
 }
@@ -40,7 +43,7 @@ input.addEventListener("keyup", () => {
 input.addEventListener("keypress", async (e) => {
     if (e.key == "Enter" && input.value != "") {
         try {
-            const data = await (await fetch("http://localhost:7000/tasks", {
+            const data = await (await fetch(`${BASE_URL}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -58,7 +61,7 @@ input.addEventListener("keypress", async (e) => {
 
 add.addEventListener("click", async () => {
     try {
-        const data = await (await fetch("http://localhost:7000/tasks", {
+        const data = await (await fetch(`${BASE_URL}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -122,7 +125,7 @@ const removeItem = (_remove_btn) => {
             })
             let toggle = itemsArr[indexOfItemDeleted].isDone;
 
-            await fetch(`http://localhost:7000/tasks?id=${itemsArr[indexOfItemDeleted]._id}`, {
+            await fetch(`${BASE_URL}?id=${itemsArr[indexOfItemDeleted]._id}`, {
                 method: "DELETE"
             });
             itemsArr.splice(indexOfItemDeleted, 1);
@@ -148,7 +151,7 @@ const doneItem = (_done_btn) => {
             let toggle = itemsArr[indexOfItemDone].isDone;
 
             if (toggle === false) {
-                await fetch("http://localhost:7000/tasks/done", {
+                await fetch(`${BASE_URL}/done`, {
                     method: "PUT",
                     headers: {
                         'Content-Type': 'application/json'
@@ -159,7 +162,7 @@ const doneItem = (_done_btn) => {
                 renderTodo();
             }
             else {
-                await fetch("http://localhost:7000/tasks/undone", {
+                await fetch(`${BASE_URL}/undone`, {
                     method: "PUT",
                     headers: {
                         'Content-Type': 'application/json'
@@ -227,14 +230,14 @@ todo.addEventListener("click", () => {
 remove_all.addEventListener("click", async () => {
     try {
         if (spanRemove_all.innerText === "TODO") {
-            await fetch("http://localhost:7000/tasks/todo-list", {
+            await fetch(`${BASE_URL}/todo-list`, {
                 method: "DELETE"
             });
             itemsArr = itemsArr.filter(item => item.isDone !== false);
             renderTodo();
         }
         if (spanRemove_all.innerText === "DONE") {
-            await fetch("http://localhost:7000/tasks/done-list", {
+            await fetch(`${BASE_URL}/done-list`, {
                 method: "DELETE"
             });
             itemsArr = itemsArr.filter(item => item.isDone !== true);
