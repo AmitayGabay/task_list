@@ -41,7 +41,7 @@ input.addEventListener("keyup", () => {
 })
 
 input.addEventListener("keypress", async (e) => {
-    if (e.key == "Enter" && input.value != "") {
+    if (e.key == "Enter" && input.value.trim().length) {
         try {
             const data = await (await fetch(`${BASE_URL}`, {
                 method: 'POST',
@@ -60,20 +60,22 @@ input.addEventListener("keypress", async (e) => {
 })
 
 add.addEventListener("click", async () => {
-    try {
-        const data = await (await fetch(`${BASE_URL}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ content: input.value })
-        })).json();
-        itemsArr.unshift(data);
-        add.style.display = "none";
-        input.value = "";
-        renderTodo();
+    if (input.value.trim().length) {
+        try {
+            const data = await (await fetch(`${BASE_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: input.value })
+            })).json();
+            itemsArr.unshift(data);
+            add.style.display = "none";
+            input.value = "";
+            renderTodo();
+        }
+        catch (e) { console.error(e) };
     }
-    catch (e) { console.error(e) };
 })
 
 const renderTodo = () => {
