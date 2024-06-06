@@ -27,9 +27,12 @@ input.addEventListener("change", (e) => {
 })
 // document.querySelector("input").addEventListener("change", (e) => console.log(e))
 const getDataFromApi = async () => {
-    // itemsArr = await (await fetch(`${_BASE_URL}`)).json();
-    // itemsArr.reverse();
-    // renderTodo();
+    // option 1
+    itemsArr = await (await fetch(`${_BASE_URL}`)).json();
+    itemsArr.reverse();
+    renderTodo();
+
+    // option 2
     // $.get(`${_BASE_URL}`)
     //     .done(function (data) {
     //         itemsArr = data;
@@ -39,11 +42,13 @@ const getDataFromApi = async () => {
     //     .fail(function (xhr, status, error) {
     //         console.error('Error:', error);
     //     });
-    $.get(`${_BASE_URL}`, {}, function (data) {
-        itemsArr = data;
-        itemsArr.reverse();
-        renderTodo();
-    })
+
+    // option 3
+    // $.get(`${_BASE_URL}`, {}, function (data) {
+    //     itemsArr = data;
+    //     itemsArr.reverse();
+    //     renderTodo();
+    // })
 }
 
 getDataFromApi();
@@ -59,21 +64,23 @@ input.addEventListener("keyup", () => {
 
 input.addEventListener("keypress", async (e) => {
     if (e.key == "Enter" && input.value.trim().length) {
-        // try {
-        //     const data = await (await fetch(`${_BASE_URL}`, {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({ content: input.value })
-        //     })).json();
-        //     itemsArr.unshift(data);
-        //     add.style.display = "none";
-        //     input.value = "";
-        //     renderTodo();
-        // }
-        // catch (e) { console.error(e) };
+        // option 1
+        try {
+            const data = await (await fetch(`${_BASE_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: input.value })
+            })).json();
+            itemsArr.unshift(data);
+            add.style.display = "none";
+            input.value = "";
+            renderTodo();
+        }
+        catch (e) { console.error(e) };
 
+        // option 2
         // $.ajax({
         //     url: `${_BASE_URL}`,
         //     method: 'POST',
@@ -89,34 +96,38 @@ input.addEventListener("keypress", async (e) => {
         //         console.error('Error:', error);
         //     }
         // });
-        $.post(_BASE_URL, JSON.stringify({ content: input.value }), function (data) {
-            itemsArr.unshift(data);
-            add.style.display = "none";
-            input.value = "";
-            renderTodo();
-        }, 'json').fail(function (xhr, status, error) {
-            console.error('Error:', error);
-        });
+
+        // option 3
+        // $.post(_BASE_URL, JSON.stringify({ content: input.value }), function (data) {
+        //     itemsArr.unshift(data);
+        //     add.style.display = "none";
+        //     input.value = "";
+        //     renderTodo();
+        // }, 'json').fail(function (xhr, status, error) {
+        //     console.error('Error:', error);
+        // });
     }
 })
 
 add.addEventListener("click", async () => {
     if (input.value.trim().length) {
-        // try {
-        //     const data = await (await fetch(`${_BASE_URL}`, {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({ content: input.value })
-        //     })).json();
-        //     itemsArr.unshift(data);
-        //     add.style.display = "none";
-        //     input.value = "";
-        //     renderTodo();
-        // }
-        // catch (e) { console.error(e) };
+        // option 1
+        try {
+            const data = await (await fetch(`${_BASE_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: input.value })
+            })).json();
+            itemsArr.unshift(data);
+            add.style.display = "none";
+            input.value = "";
+            renderTodo();
+        }
+        catch (e) { console.error(e) };
 
+        // option 2
         // $.ajax({
         //     url: `${_BASE_URL}`,
         //     method: 'POST',
@@ -132,14 +143,16 @@ add.addEventListener("click", async () => {
         //         console.error('Error:', error);
         //     }
         // });
-        $.post(_BASE_URL, JSON.stringify({ content: input.value }), function (data) {
-            itemsArr.unshift(data);
-            add.style.display = "none";
-            input.value = "";
-            renderTodo();
-        }, 'json').fail(function (xhr, status, error) {
-            console.error('Error:', error);
-        });
+
+        // option 3
+        // $.post(_BASE_URL, JSON.stringify({ content: input.value }), function (data) {
+        //     itemsArr.unshift(data);
+        //     add.style.display = "none";
+        //     input.value = "";
+        //     renderTodo();
+        // }, 'json').fail(function (xhr, status, error) {
+        //     console.error('Error:', error);
+        // });
     }
 })
 
@@ -192,32 +205,35 @@ const removeItem = (_remove_btn) => {
             })
             let toggle = itemsArr[indexOfItemDeleted].isDone;
 
-            // await fetch(`${_BASE_URL}?id=${itemsArr[indexOfItemDeleted]._id}`, {
-            //     method: "DELETE"
-            // });
-            // itemsArr.splice(indexOfItemDeleted, 1);
-            // if (toggle === false) {
-            //     renderTodo();
-            // }
-            // else {
-            //     renderDone();
-            // }
-            $.ajax({
-                url: `${_BASE_URL}?id=${itemsArr[indexOfItemDeleted]._id}`,
-                method: 'DELETE',
-                success: function () {
-                    itemsArr.splice(indexOfItemDeleted, 1);
-                    if (toggle === false) {
-                        renderTodo();
-                    }
-                    else {
-                        renderDone();
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                }
+            // option 1
+            await fetch(`${_BASE_URL}?id=${itemsArr[indexOfItemDeleted]._id}`, {
+                method: "DELETE"
             });
+            itemsArr.splice(indexOfItemDeleted, 1);
+            if (toggle === false) {
+                renderTodo();
+            }
+            else {
+                renderDone();
+            }
+
+            // option 2
+            // $.ajax({
+            //     url: `${_BASE_URL}?id=${itemsArr[indexOfItemDeleted]._id}`,
+            //     method: 'DELETE',
+            //     success: function () {
+            //         itemsArr.splice(indexOfItemDeleted, 1);
+            //         if (toggle === false) {
+            //             renderTodo();
+            //         }
+            //         else {
+            //             renderDone();
+            //         }
+            //     },
+            //     error: function (xhr, status, error) {
+            //         console.error('Error:', error);
+            //     }
+            // });
         } catch (e) {
             console.error(e);
         }
@@ -233,52 +249,58 @@ const doneItem = (_done_btn) => {
             let toggle = itemsArr[indexOfItemDone].isDone;
 
             if (toggle === false) {
-                // await fetch(`${_BASE_URL}/done`, {
-                //     method: "PUT",
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id })
-                // });
-                // itemsArr[indexOfItemDone].isDone = true;
-                // renderTodo();
-                $.ajax({
-                    url: `${_BASE_URL}/done`,
-                    method: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id }),
-                    success: function () {
-                        itemsArr[indexOfItemDone].isDone = true;
-                        renderTodo();
+                // option 1
+                await fetch(`${_BASE_URL}/done`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
                     },
-                    error: function (xhr, status, error) {
-                        console.error('Error:', error);
-                    }
+                    body: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id })
                 });
+                itemsArr[indexOfItemDone].isDone = true;
+                renderTodo();
+
+                // option 2
+                // $.ajax({
+                //     url: `${_BASE_URL}/done`,
+                //     method: 'PUT',
+                //     contentType: 'application/json',
+                //     data: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id }),
+                //     success: function () {
+                //         itemsArr[indexOfItemDone].isDone = true;
+                //         renderTodo();
+                //     },
+                //     error: function (xhr, status, error) {
+                //         console.error('Error:', error);
+                //     }
+                // });
             }
             else {
-                // await fetch(`${_BASE_URL}/undone`, {
-                //     method: "PUT",
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id })
-                // });
-                // itemsArr[indexOfItemDone].isDone = false;
-                // renderDone();
-                $.ajax({
-                    url: `${_BASE_URL}/undone`,
-                    method: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id }),
-                    success: function () {
-                        itemsArr[indexOfItemDone].isDone = false;
-                        renderDone();
+                // option 1
+                await fetch(`${_BASE_URL}/undone`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
                     },
-                    error: function (xhr, status, error) {
-                        console.error('Error:', error);
-                    }
+                    body: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id })
                 });
+                itemsArr[indexOfItemDone].isDone = false;
+                renderDone();
+
+                // option 2
+                // $.ajax({
+                //     url: `${_BASE_URL}/undone`,
+                //     method: 'PUT',
+                //     contentType: 'application/json',
+                //     data: JSON.stringify({ _id: itemsArr[indexOfItemDone]._id }),
+                //     success: function () {
+                //         itemsArr[indexOfItemDone].isDone = false;
+                //         renderDone();
+                //     },
+                //     error: function (xhr, status, error) {
+                //         console.error('Error:', error);
+                //     }
+                // });
             }
         } catch (e) {
             console.error(e);
@@ -338,40 +360,46 @@ todo.addEventListener("click", () => {
 remove_all.addEventListener("click", async () => {
     try {
         if (spanRemove_all.innerText === "TODO") {
-            // await fetch(`${_BASE_URL}/todo-list`, {
-            //     method: "DELETE"
-            // });
-            // itemsArr = itemsArr.filter(item => item.isDone !== false);
-            // renderTodo();
-            $.ajax({
-                url: `${_BASE_URL}/todo-list`,
-                method: 'DELETE',
-                success: function () {
-                    itemsArr = itemsArr.filter(item => item.isDone !== false);
-                    renderTodo();
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                }
+            // option 1
+            await fetch(`${_BASE_URL}/todo-list`, {
+                method: "DELETE"
             });
+            itemsArr = itemsArr.filter(item => item.isDone !== false);
+            renderTodo();
+
+            // option 2
+            // $.ajax({
+            //     url: `${_BASE_URL}/todo-list`,
+            //     method: 'DELETE',
+            //     success: function () {
+            //         itemsArr = itemsArr.filter(item => item.isDone !== false);
+            //         renderTodo();
+            //     },
+            //     error: function (xhr, status, error) {
+            //         console.error('Error:', error);
+            //     }
+            // });
         }
         if (spanRemove_all.innerText === "DONE") {
-            // await fetch(`${_BASE_URL}/done-list`, {
-            //     method: "DELETE"
-            // });
-            // itemsArr = itemsArr.filter(item => item.isDone !== true);
-            // renderDone();
-            $.ajax({
-                url: `${_BASE_URL}/done-list`,
-                method: 'DELETE',
-                success: function () {
-                    itemsArr = itemsArr.filter(item => item.isDone !== true);
-                    renderDone();
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                }
+            // option 1
+            await fetch(`${_BASE_URL}/done-list`, {
+                method: "DELETE"
             });
+            itemsArr = itemsArr.filter(item => item.isDone !== true);
+            renderDone();
+
+            // option 2
+            // $.ajax({
+            //     url: `${_BASE_URL}/done-list`,
+            //     method: 'DELETE',
+            //     success: function () {
+            //         itemsArr = itemsArr.filter(item => item.isDone !== true);
+            //         renderDone();
+            //     },
+            //     error: function (xhr, status, error) {
+            //         console.error('Error:', error);
+            //     }
+            // });
         }
     } catch (e) {
         console.error(e);
